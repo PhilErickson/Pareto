@@ -1,0 +1,12 @@
+Package: pareto
+Type: Package
+Title: Contains functions to evaluate Pareto density, distribution,
+       and quantile function and to generate Pareto-distributed
+       pseudorandom variables. 
+Version: 1.0
+Date: 2013-04-15
+Author: Philip J. Erickson
+Suggests: xtable
+Maintainer: Philip J. Erickson <erickson.philip.j@gmail.com>
+Description: Replicates behavior of R packages like gamma and beta.
+License: GPL

@@ -1,0 +1,114 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                
+\geometry{letterpaper}                    
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{amsmath}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+%\VignetteIndexEntry{Using pareto}
+
+\title{Using the \texttt{pareto} package}
+\author{Philip J. Erickson}
+\date{March 4, 2012}         
+
+\begin{document}
+\maketitle
+<<echo = false,results = hide>>=
+library(pareto)
+library(xtable)
+b <- c(1, 2, 3)
+clrs <- c("blue", "red", "cyan")
+lbl <- rep(NA, 3)
+for (i in 1:3) {
+     lbl[i] <- c(paste('beta = ', b[i], sep = ''))
+}
+xmax <- 15
+x <- seq(1, xmax, length = 1001)
+N <- 7
+@
+
+
+
+\section{Introduction}
+The \texttt{pareto} package includes three primary functions: \texttt{dpareto}, \texttt{ppareto}, and \texttt{qpareto}, with corresponding functions \texttt{p.dpareto}, \texttt{p.ppareto}, and \texttt{p.qpareto} to allow for parallel processing. These three compute the Pareto density, distribution, and quantile function, respectively, defined as follows:
+\begin{table}[htdp]
+\caption{\texttt{pareto} functions}
+\begin{center}
+\begin{tabular}{c|c|c}
+Density & Distribution & Quantile \\
+$f(x; \alpha, \beta) = \frac{\beta \alpha^\beta}{x^{\beta + 1}}$ & $F(x; \alpha, \beta) = 1 - \left(\frac{\alpha}{x}\right)^{\beta}$ & $Q(p; \alpha, \beta) = \alpha (1 - p)^{-\frac{1}{\beta}}$\\
+\end{tabular}
+\end{center}
+\label{commands}
+\end{table}%
+
+\section{Usage}
+The following are simple examples of their usages:
+
+<<>>=
+  dpareto(3, 1, 2)
+  ppareto(1:3, 1, 2)
+  qpareto(0.5, 1:3, 2)
+@
+
+The quantile function is the inverse of the distribution function. Table \ref{tab:pqpareto} displays this fact by using the upper tail and log specification of the \texttt{ppareto} and \texttt{qpareto} functions with scale and shape parameters $\alpha = 2$ and $\beta = 1$, applying first the distribution function and then the quantile function to get the original input.
+
+<<results=tex,echo=false>>=
+q <- c(3, 4, 5, 6, 7)
+p <- ppareto(q, 2, 1, lower.tail = FALSE, log.p = TRUE)
+m <- cbind(q, p, qpareto(p, 2, 1, lower.tail = FALSE, log.p = TRUE))
+colnames(m) <- c("q", "p = ppareto(q)", "qpareto(p)")
+xtable(as.data.frame(m), align = rep("c", 4),
+            caption = paste("Results for \\texttt{ppareto} and \\texttt{qpareto}."),
+            label = "tab:pqpareto")
+@
+
+Figure \ref{fig:dpareto} shows the Pareto density for fixed scale and varying shape parameters and Figure \ref{fig:ppareto} shows the corresponding distribution:
+
+\begin{figure}
+  \centering
+<<fig=TRUE,width=5,height=5,echo=false>>=b
+plot.new()
+plot.window(xlim = c(-0.01, xmax), ylim = c(-0.01, 0.5))
+for (i in 1:3) {
+    lines(x, dpareto(x, 1, b[i]), col = clrs[i])
+}
+abline(h = 0, v = 0, lty = "11")
+abline(v = 1)
+axis(1, at = 1)
+axis(1)
+axis(2)
+box()
+legend(xmax - 5, 0.45, lbl, cex = 0.8, col = clrs, lty = 1)
+title(xlab = "x", ylab = "f(x; 1, beta)")
+@  
+  \caption{Pareto density, $\alpha = 1$.}
+  \label{fig:dpareto}
+\end{figure}
+
+\begin{figure}
+  \centering
+<<fig=TRUE,width=5,height=5,echo=false>>=b
+plot.new()
+plot.window(xlim = c(-0.01, xmax), ylim = c(-0.01, 1))
+for (i in 1:3) {
+    lines(x, ppareto(x, 1, b[i]), col = clrs[i])
+}
+abline(h = 0, v = 0, lty = "11")
+abline(v = 1)
+axis(1, at = 1)
+axis(1)
+axis(2)
+box()
+legend(xmax - 5, 0.45, lbl, cex = 0.8, col = clrs, lty = 1)
+title(xlab = "x", ylab = "f(x; 1, beta)")
+@  
+  \caption{Pareto CDF, $\alpha = 1$.}
+  \label{fig:ppareto}
+\end{figure}
+
+
+
+\end{document}  
