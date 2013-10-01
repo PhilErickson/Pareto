@@ -1,0 +1,3 @@
+This is a package written for R containing different methods of using the Pareto distribution. Includes the Pareto density, distribution, quantile function and pseudorandom number generator.
+
+Most functions call C code to evaluate. Some allow for parallel processing.
